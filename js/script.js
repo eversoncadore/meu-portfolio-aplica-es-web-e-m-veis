@@ -1,0 +1,13 @@
+document.addEventListener('DOMContentLoaded',function(){
+const ano=document.getElementById('ano-atual'),botaoMenu=document.querySelector('.botao-menu'),menu=document.querySelector('.menu'),links=document.querySelectorAll('.menu a'),secoes=document.querySelectorAll('main section[id]'),botaoTema=document.getElementById('alternar-tema');
+ano.textContent=new Date().getFullYear();
+function aplicarTema(escuro){document.body.classList.toggle('tema-escuro',escuro);botaoTema.textContent=escuro?'Tema claro':'Tema escuro';botaoTema.setAttribute('aria-label',escuro?'Ativar tema claro':'Ativar tema escuro');botaoTema.setAttribute('aria-pressed',String(escuro));}
+aplicarTema(localStorage.getItem('tema')==='escuro');
+botaoTema.addEventListener('click',function(){const escuro=!document.body.classList.contains('tema-escuro');aplicarTema(escuro);localStorage.setItem('tema',escuro?'escuro':'claro');});
+botaoMenu.addEventListener('click',function(){const aberto=menu.classList.toggle('aberto');botaoMenu.setAttribute('aria-expanded',String(aberto));});
+links.forEach(link=>link.addEventListener('click',()=>{menu.classList.remove('aberto');botaoMenu.setAttribute('aria-expanded','false')}));
+function atualizar(){let id='sobre';secoes.forEach(secao=>{if(window.scrollY>=secao.offsetTop-130)id=secao.id});links.forEach(link=>link.classList.toggle('ativo',link.getAttribute('href')==='#'+id));}window.addEventListener('scroll',atualizar);atualizar();
+const form=document.getElementById('formulario-contato'),nome=document.getElementById('nome'),email=document.getElementById('email'),mensagem=document.getElementById('mensagem'),retorno=document.getElementById('retorno-formulario');
+function erro(campo,id,texto){campo.classList.add('invalido');document.getElementById(id).textContent=texto}function limpar(campo,id){campo.classList.remove('invalido');document.getElementById(id).textContent=''}function emailValido(v){return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)}
+form.addEventListener('submit',function(e){e.preventDefault();let valido=true;limpar(nome,'erro-nome');limpar(email,'erro-email');limpar(mensagem,'erro-mensagem');retorno.textContent='';retorno.className='retorno';if(nome.value.trim().length<3){erro(nome,'erro-nome','Digite um nome com pelo menos 3 caracteres.');valido=false}if(!emailValido(email.value.trim())){erro(email,'erro-email','Informe um e-mail válido.');valido=false}if(mensagem.value.trim().length<10){erro(mensagem,'erro-mensagem','Digite uma mensagem com pelo menos 10 caracteres.');valido=false}if(!valido){retorno.textContent='Revise os campos indicados.';retorno.classList.add('falha');return}form.reset();retorno.textContent='Mensagem enviada com sucesso! Esta foi uma simulação de envio.';retorno.classList.add('sucesso')});
+});
